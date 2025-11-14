@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TeamServer.Application.Services.AgentServices.AgentCore;
 using TeamServer.Application.Services.AgentServices.AgentCRUD;
+using TeamServer.Application.Services.ListenerServices.HttpListenerService.HttpCore;
 using TeamServer.Application.Services.ListenerServices.HttpListenerService.HttpCRUD;
 using TeamServer.Infrastructure.Data;
 
@@ -14,9 +15,7 @@ namespace TeamServer
 
             builder.WebHost.ConfigureKestrel(o =>
             {
-                o.ListenAnyIP(5225);
-                o.ListenAnyIP(8080);
-                
+                o.ListenAnyIP(5225);              
             });
 
             // Add services to the container.
@@ -29,6 +28,7 @@ namespace TeamServer
             builder.Services.AddDbContext<AppDbContext>(o => 
                     o.UseSqlServer(builder.Configuration.GetConnectionString("TeamServerDb")));
 
+            builder.Services.AddSingleton<IHttpCore, HttpCore>();
             builder.Services.AddScoped<IHttpCRUD, HttpCRUD>();
 
             builder.Services.AddScoped<IAgentCRUD, AgentCRUD>();
