@@ -50,6 +50,17 @@ namespace TeamServer.Application.Services.AgentServices.AgentCRUD
             return agent;
         }
 
+        // get uniqueId
+        public async Task<Agent?> GetAgentByUniqueIdAsync(Guid uniqueId)
+        {
+            if (uniqueId == Guid.Empty)
+                throw new ArgumentException($"The uniqueId: '{uniqueId}' is invalid.");
+
+            return await _db.Agents
+                .Include(a => a.Metadata)
+                .FirstOrDefaultAsync(a => a.UniqueId == uniqueId);
+        }
+
         // delete
         public async Task<bool> RemoveAgentAsync(Guid id)
         {
