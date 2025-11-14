@@ -46,13 +46,14 @@ namespace TeamServer.Infrastructure.Controllers.ImplantControllers
             }
         }
 
-        [HttpGet, HttpPut]
+        [HttpGet]
         public async Task<IActionResult> HandleImplant()
         {
             try
             {
                 var ping = ExtractMetadata(HttpContext.Request.Headers);
                 if (ping == null) return NotFound();
+                if (ping.MetadataDTO == null) return BadRequest("Missing or corrupted metadata");
 
                 var metadata = new AgentMetadata
                 {
@@ -64,16 +65,10 @@ namespace TeamServer.Infrastructure.Controllers.ImplantControllers
                     Integrity = ping.MetadataDTO.Integrity
                 };
 
-                Agent agent;
+                var agent = await _agentCRUD.GetAgentByUniqueIdAsync(ping.UniqueId);
 
-                try
+                if (agent == null)
                 {
-
-                    agent = await _agentCRUD.GetAgentAsync(ping.UniqueId);
-                }
-                catch (KeyNotFoundException)
-                {
-
                     agent = new Agent(ping.UniqueId, metadata);
                     await _agentCRUD.AddAgentAsync(agent);
                 }
