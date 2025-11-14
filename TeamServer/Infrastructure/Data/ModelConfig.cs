@@ -39,9 +39,9 @@ namespace TeamServer.Infrastructure.Data
 
                 e.OwnsOne(a => a.Metadata, md =>
                 {
-                    md.Property(m => m.Hostname).HasMaxLength(15).IsRequired();
-                    md.Property(m => m.Username).HasMaxLength(15).IsRequired();
-                    md.Property(m => m.ProcessName).HasMaxLength(15).IsRequired();
+                    md.Property(m => m.Hostname).HasMaxLength(30).IsRequired();
+                    md.Property(m => m.Username).HasMaxLength(30).IsRequired();
+                    md.Property(m => m.ProcessName).HasMaxLength(30).IsRequired();
                     md.Property(m => m.ProcessId).IsRequired();
                     md.Property(m => m.Architecture).IsRequired();
                     md.Property(m => m.Integrity).IsRequired();
