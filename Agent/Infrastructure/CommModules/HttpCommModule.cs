@@ -13,7 +13,7 @@ namespace AgentClient.Infrastructure.CommModules
         private readonly Agent _agent;
 
         private CancellationTokenSource _tokenSource;
-        private HttpClient _client;
+        private HttpClient? _client;
 
         public HttpCommModule(string connectAddress, int connectPort, Agent agent)
         {
@@ -67,6 +67,9 @@ namespace AgentClient.Infrastructure.CommModules
         public override async Task Stop()
         {
             _tokenSource.Cancel();
+
+            _client?.Dispose();
+            _client = null;
 
             await Task.CompletedTask;
         }
