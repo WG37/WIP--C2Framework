@@ -18,7 +18,7 @@ namespace AgentClient.Infrastructure.CommModules
             Metadata = metadata;
         }
 
-        // recieve task
+        // empties the inbound queue and returns all received tasks to be executed
         public bool ReceiveData(out IEnumerable<AgentTask> tasks)
         {
             var list = new List<AgentTask>();
@@ -38,13 +38,14 @@ namespace AgentClient.Infrastructure.CommModules
             return true;
         }
 
-        // send data
+        
         public void SendData(AgentTaskResult result)
         {
             Outbound.Enqueue(result);
         }
 
-        // get outbound
+
+        // dequeues one outbound result so PostData() can send it to the server
         protected IEnumerable<AgentTaskResult> GetOutbound()
         {
             var list = new List<AgentTaskResult>();
