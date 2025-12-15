@@ -6,5 +6,8 @@ namespace AgentClient.Infrastructure.Native
     {
         [DllImport("Kernel32.dll", SetLastError = true)]
         public static extern bool CloseHandle(IntPtr hObject);
+
+        [DllImport("Kernel32.dll", SetLastError = true)]
+        public static extern bool IsWow64Process(IntPtr hProcess, out bool Wow64Process);
     }
 }
