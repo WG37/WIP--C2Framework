@@ -1,10 +1,9 @@
-﻿using AgentClient.Infrastructure.CommModules;
+﻿using AgentClient.Application.Commands;
 using AgentClient.Domain.Models.Agents;
+using AgentClient.Infrastructure.CommModules;
 using System.Diagnostics;
-using System.Security.Principal;
-using System.ComponentModel.DataAnnotations;
-using AgentClient.Application.Commands;
 using System.Reflection;
+using System.Security.Principal;
 
 namespace AgentClient
 {
