@@ -61,6 +61,8 @@ namespace TeamServer.Infrastructure.Controllers.ListenerControllers.HttpControll
 
             await _httpCRUD.AddListenerAsync(listener);
 
+            listener.Active();
+
             await _httpCore.StartHttpListenerAsync(listener.BindPort);
 
             return CreatedAtAction(nameof(GetListener), new { name = listener.Name }, listener );
@@ -76,7 +78,7 @@ namespace TeamServer.Infrastructure.Controllers.ListenerControllers.HttpControll
 
             var listener = await _httpCRUD.GetListenerAsync(req.Name);
             if (listener == null)
-                return BadRequest("The listener does not exist");
+                return NotFound("The listener does not exist");
 
             await _httpCore.StopHttpListenerAsync();
 
