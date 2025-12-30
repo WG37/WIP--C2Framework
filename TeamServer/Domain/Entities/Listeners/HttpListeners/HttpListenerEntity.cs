@@ -15,5 +15,20 @@ namespace TeamServer.Domain.Entities.Listeners.HttpListeners
         }
 
         protected HttpListenerEntity() { } // EF Core
+
+        public void Active()
+        {
+            SetStatus(Status.ACTIVE);
+        }
+
+        public void Disabled()
+        {
+            SetStatus(Status.DISABLED);
+        }
+
+        public void Idle()
+        {
+            SetStatus(Status.IDLE);
+        }
     }
 }
